@@ -1,0 +1,84 @@
+{
+  "name": "masterchef: config pool",
+  "steps": [
+    {
+      "step": "externalSteps",
+      "path": "000_init.scen.json"
+    },
+    {
+      "step": "setState",
+      "accounts": {
+        "address:bob": {
+          "esdt": {
+            "str:token-b": "1,000,000,000"
+          }
+        }
+      }
+    },
+    {
+      "step": "scCall",
+      "txId": "add-pool-1",
+      "tx": {
+        "from": "address:owner",
+        "to": "sc:masterchef",
+        "function": "add",
+        "arguments": ["str:token-b", "1000"],
+        "gasLimit": "100,000,000",
+        "gasPrice": "0"
+      },
+      "expect": {
+        "out": [],
+        "status": "",
+        "gas": "*",
+        "refund": "*"
+      }
+    },
+    {
+      "step": "checkState",
+      "accounts": {
+        "sc:masterchef": {
+          "nonce": "*",
+          "storage": {
+            "str:want_tokens.item|u32:1": "str:token-b",
+            "str:total_alloc_point": "1,000",
+            "+": ""
+          },
+          "code": "file:../output/masterchef.wasm"
+        },
+        "+": ""
+      }
+    },
+    {
+      "step": "scCall",
+      "txId": "update-pool-1",
+      "tx": {
+        "from": "address:owner",
+        "to": "sc:masterchef",
+        "function": "set",
+        "arguments": ["u32:1", "2000"],
+        "gasLimit": "100,000,000",
+        "gasPrice": "0"
+      },
+      "expect": {
+        "out": [],
+        "status": "",
+        "gas": "*",
+        "refund": "*"
+      }
+    },
+    {
+      "step": "checkState",
+      "accounts": {
+        "sc:masterchef": {
+          "nonce": "*",
+          "storage": {
+            "str:total_alloc_point": "2,000",
+            "+": ""
+          },
+          "code": "file:../output/masterchef.wasm"
+        },
+        "+": ""
+      }
+    }
+  ]
+}

@@ -1,0 +1,80 @@
+{
+  "name": "masterchef: init contract",
+  "comment": "add then check",
+  "gasSchedule": "v3",
+  "steps": [
+    {
+      "step": "setState",
+      "accounts": {
+        "address:owner": {
+          "nonce": "1",
+          "balance": "1,000,000,000",
+          "esdt": {
+            "str:token-a": "1,000,000"
+          }
+        }
+      },
+      "newAddresses": [
+        {
+          "creatorAddress": "address:owner",
+          "creatorNonce": "1",
+          "newAddress": "sc:masterchef"
+        }
+      ]
+    },
+    {
+      "step": "scDeploy",
+      "txId": "1",
+      "tx": {
+        "from": "address:owner",
+        "contractCode": "file:../output/masterchef.wasm",
+        "arguments": ["str:token-a"],
+        "gasLimit": "5,000,000",
+        "gasPrice": "0"
+      },
+      "expect": {
+        "out": [],
+        "status": "",
+        "logs": [],
+        "gas": "*",
+        "refund": "*"
+      }
+    },
+    {
+      "step": "scQuery",
+      "txId": "2",
+      "tx": {
+        "to": "sc:masterchef",
+        "function": "reward_token",
+        "arguments": []
+      },
+      "expect": {
+        "out": ["str:token-a"],
+        "status": "",
+        "logs": []
+      }
+    },
+    {
+      "step": "checkState",
+      "accounts": {
+        "address:owner": {
+          "nonce": "*",
+          "balance": "1,000,000,000",
+          "storage": {},
+          "code": "",
+          "esdt": {
+            "str:token-a": "*"
+          }
+        },
+        "sc:masterchef": {
+          "nonce": "0",
+          "balance": "0",
+          "storage": {
+            "str:reward_token": "str:token-a"
+          },
+          "code": "file:../output/masterchef.wasm"
+        }
+      }
+    }
+  ]
+}

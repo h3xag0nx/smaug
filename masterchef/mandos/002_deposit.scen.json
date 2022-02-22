@@ -1,0 +1,97 @@
+{
+  "name": "masterchef: config pool",
+  "steps": [
+    {
+      "step": "externalSteps",
+      "path": "001_config-pool.scen.json"
+    },
+    {
+      "step": "scCall",
+      "txId": "bob-deposit-pool-1",
+      "tx": {
+        "from": "address:bob",
+        "to": "sc:masterchef",
+        "function": "deposit",
+        "esdtValue": [
+          {
+            "tokenIdentifier": "str:token-b",
+            "value": "5,000,000"
+          }
+        ],
+        "arguments": ["u32:1"],
+        "gasLimit": "100,000,000",
+        "gasPrice": "0"
+      },
+      "expect": {
+        "out": [],
+        "status": "",
+        "gas": "*",
+        "refund": "*"
+      }
+    },
+    {
+      "step": "checkState",
+      "accounts": {
+        "address:bob": {
+          "nonce": "*",
+          "esdt": {
+            "str:token-b": "995,000,000"
+          },
+          "balance": "*"
+        },
+        "sc:masterchef": {
+          "nonce": "*",
+          "storage": {
+            "+": ""
+          },
+          "code": "file:../output/masterchef.wasm",
+          "esdt": {
+            "str:token-b": "5,000,000"
+          }
+        },
+        "+": ""
+      }
+    },
+    {
+      "step": "scCall",
+      "txId": "bob-deposit-pool-1",
+      "tx": {
+        "from": "address:bob",
+        "to": "sc:masterchef",
+        "function": "withdraw",
+        "arguments": ["u32:1", "1,000,000"],
+        "gasLimit": "100,000,000",
+        "gasPrice": "0"
+      },
+      "expect": {
+        "out": [],
+        "status": "",
+        "gas": "*",
+        "refund": "*"
+      }
+    },
+    {
+      "step": "checkState",
+      "accounts": {
+        "address:bob": {
+          "nonce": "*",
+          "esdt": {
+            "str:token-b": "996,000,000"
+          },
+          "balance": "*"
+        },
+        "sc:masterchef": {
+          "nonce": "*",
+          "storage": {
+            "+": ""
+          },
+          "code": "file:../output/masterchef.wasm",
+          "esdt": {
+            "str:token-b": "4,000,000"
+          }
+        },
+        "+": ""
+      }
+    }
+  ]
+}

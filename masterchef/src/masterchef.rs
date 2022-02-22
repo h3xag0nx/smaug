@@ -16,16 +16,21 @@ pub struct UserInfo<M: ManagedTypeApi> {
     reward_debt: BigUint<M>,
 }
 
+impl<M: ManagedTypeApi> Default for UserInfo<M> {
+    fn default() -> Self {
+        Self {
+            amount: BigUint::zero(),
+            reward_debt: BigUint::zero(),
+        }
+    }
+}
+
 const ACC_REWARD_PRECISION: u64 = 10u64.pow(12);
 
 /// One of the simplest smart contracts possible,
 /// it holds a single variable in storage, which anyone can increment.
 #[elrond_wasm::derive::contract]
 pub trait MasterChef {
-    #[view(getSum)]
-    #[storage_mapper("sum")]
-    fn sum(&self) -> SingleValueMapper<BigInt>;
-
     #[init]
     fn init(&self, reward_token: &TokenIdentifier) {
         // not required
@@ -41,7 +46,7 @@ pub trait MasterChef {
     fn add(&self, want: TokenIdentifier, alloc_point: &BigUint) {
         // TODO: check duplicate, mass update pool
         // require!(!self.want_tokens().contains(&want), "alreadyAdded");
-        let pool_id = self.want_tokens().len();
+        let pool_id = self.want_tokens().len() + 1;
         self.want_tokens().push(&want);
         let info = PoolInfo {
             alloc_point: alloc_point.clone(),
@@ -76,6 +81,7 @@ pub trait MasterChef {
         self.update_pool(pool_id);
         let pool = self.pool_info(pool_id).get();
         let caller = self.blockchain().get_caller();
+        self.user_info(&caller).set_if_empty(&UserInfo::default());
         self.user_info(&caller).update(|user| {
             user.amount += &amount;
             user.reward_debt += &amount * &pool.acc_reward_per_share / ACC_REWARD_PRECISION;
@@ -112,7 +118,8 @@ pub trait MasterChef {
         let pending_reward = acc_reward - user.reward_debt;
 
         let reward_token = self.reward_token().get();
-        self.send().direct(&caller, &reward_token, 0, &pending_reward, &[]);
+        self.send()
+            .direct(&caller, &reward_token, 0, &pending_reward, &[]);
     }
 
     // ======= private ======
@@ -148,7 +155,7 @@ pub trait MasterChef {
         #[indexed] pool_id: usize,
         amount: &BigUint,
     );
-    
+
     #[event("withdrawn")]
     fn emit_withdrawn_event(
         &self,

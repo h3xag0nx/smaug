@@ -9,7 +9,6 @@ elrond_wasm_node::wasm_endpoints! {
     (
         add
         deposit
-        getSum
         harvest
         pool_info
         reward_per_block
