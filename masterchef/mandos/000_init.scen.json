@@ -5,6 +5,9 @@
   "steps": [
     {
       "step": "setState",
+      "currentBlockInfo": {
+        "blockNonce": "123,000"
+      },
       "accounts": {
         "address:owner": {
           "nonce": "1",

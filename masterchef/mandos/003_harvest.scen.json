@@ -23,9 +23,25 @@
       }
     },
     {
-      "step": "dumpState"
+      "step": "setState",
+      "currentBlockInfo": {
+        "blockNonce": "123,010"
+      }
     },
-
+    {
+      "step": "scQuery",
+      "txId": "query-2",
+      "tx": {
+        "to": "sc:masterchef",
+        "function": "pending_reward",
+        "arguments": ["1", "address:bob"]
+      },
+      "expect": {
+        "out": ["10,000"],
+        "status": "",
+        "logs": []
+      }
+    },
     {
       "step": "scCall",
       "txId": "bob-harvest-1",
@@ -43,9 +59,6 @@
         "gas": "*",
         "refund": "*"
       }
-    },
-    {
-      "step": "dumpState"
     }
   ]
 }
