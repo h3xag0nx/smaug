@@ -79,6 +79,24 @@
         },
         "+": ""
       }
+    },
+    {
+      "step": "scCall",
+      "txId": "update-pool-1",
+      "tx": {
+        "from": "address:owner",
+        "to": "sc:masterchef",
+        "function": "set_reward_per_block",
+        "arguments": ["1,000,000,000"],
+        "gasLimit": "100,000,000",
+        "gasPrice": "0"
+      },
+      "expect": {
+        "out": [],
+        "status": "",
+        "gas": "*",
+        "refund": "*"
+      }
     }
   ]
 }

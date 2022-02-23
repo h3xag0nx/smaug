@@ -54,7 +54,7 @@
     },
     {
       "step": "scCall",
-      "txId": "bob-deposit-pool-1",
+      "txId": "bob-withdraw-pool-1",
       "tx": {
         "from": "address:bob",
         "to": "sc:masterchef",
